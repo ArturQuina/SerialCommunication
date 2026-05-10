@@ -293,33 +293,12 @@ namespace SerialCommunication
         {
             try
             {
-                if (serialPortArduino != null && serialPortArduino.IsOpen)
-                {
-                    // clear previous responses
-                    try { serialPortArduino.ReadExisting(); } catch { }
-
-                    for (int pin = 5; pin <= 7; pin++)
-                    {
-                        try
-                        {
-                            serialPortArduino.WriteLine("get d" + pin);
-                            string reply = string.Empty;
-                            try { reply = serialPortArduino.ReadLine().Trim(); } catch (TimeoutException) { continue; }
-                            int idx = reply.IndexOf(':');
-                            string value = (idx >= 0 && idx + 1 < reply.Length) ? reply.Substring(idx + 1).Trim() : reply.Trim();
-                            bool isOne = value == "1";
-                            if (pin == 5) radioButtonDigital5.Checked = isOne;
-                            else if (pin == 6) radioButtonDigital6.Checked = isOne;
-                            else if (pin == 7) radioButtonDigital7.Checked = isOne;
-                        }
-                        catch (Exception) { }
-                    }
-                }
+                RefreshDigitalInputsOnce();
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
                 try { if (serialPortArduino != null && serialPortArduino.IsOpen) serialPortArduino.Close(); } catch { }
-                MessageBox.Show("Fout in timerOefening3: " + ex.Message);
+                MessageBox.Show("Fout in timerOefening3: " + exception.Message);
             }
         }
     }
