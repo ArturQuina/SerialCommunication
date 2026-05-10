@@ -23,6 +23,13 @@ namespace SerialCommunication
             serialPortArduino = new SerialPort();
             serialPortArduino.ReadTimeout = 1000;
             serialPortArduino.WriteTimeout = 1000;
+
+            // timer for Oefening 3 (initialized in designer)
+            timerOefening3.Tick += timerOefening3_Tick;
+            timerOefening3.Enabled = false;
+
+            // hook tab control selection changed to enable/disable timer
+            tabControl.SelectedIndexChanged += tabControl_SelectedIndexChanged;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -265,6 +272,55 @@ namespace SerialCommunication
         private void radioButtonDigital7_CheckedChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void tabControl_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (tabControl.SelectedTab == tabPageOefening3)
+                    timerOefening3.Enabled = true;
+                else
+                    timerOefening3.Enabled = false;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Fout bij tab selectie: " + ex.Message);
+            }
+        }
+
+        private void timerOefening3_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                if (serialPortArduino != null && serialPortArduino.IsOpen)
+                {
+                    // clear previous responses
+                    try { serialPortArduino.ReadExisting(); } catch { }
+
+                    for (int pin = 5; pin <= 7; pin++)
+                    {
+                        try
+                        {
+                            serialPortArduino.WriteLine("get d" + pin);
+                            string reply = string.Empty;
+                            try { reply = serialPortArduino.ReadLine().Trim(); } catch (TimeoutException) { continue; }
+                            int idx = reply.IndexOf(':');
+                            string value = (idx >= 0 && idx + 1 < reply.Length) ? reply.Substring(idx + 1).Trim() : reply.Trim();
+                            bool isOne = value == "1";
+                            if (pin == 5) radioButtonDigital5.Checked = isOne;
+                            else if (pin == 6) radioButtonDigital6.Checked = isOne;
+                            else if (pin == 7) radioButtonDigital7.Checked = isOne;
+                        }
+                        catch (Exception) { }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                try { if (serialPortArduino != null && serialPortArduino.IsOpen) serialPortArduino.Close(); } catch { }
+                MessageBox.Show("Fout in timerOefening3: " + ex.Message);
+            }
         }
     }
 }
