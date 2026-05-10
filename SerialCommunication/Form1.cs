@@ -234,5 +234,22 @@ namespace SerialCommunication
                 try { if (serialPortArduino != null && serialPortArduino.IsOpen) serialPortArduino.Close(); } catch { }
             }
         }
+
+        private void trackBarPWM11_Scroll(object sender, EventArgs e)
+        {
+            try
+            {
+                if (serialPortArduino != null && serialPortArduino.IsOpen)
+                {
+                    string cmd = "set pwm11 " + trackBarPWM11.Value.ToString();
+                    serialPortArduino.WriteLine(cmd);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Fout bij verzenden: " + ex.Message);
+                try { if (serialPortArduino != null && serialPortArduino.IsOpen) serialPortArduino.Close(); } catch { }
+            }
+        }
     }
 }
