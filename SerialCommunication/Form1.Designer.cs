@@ -709,6 +709,7 @@
             this.radioButtonDigital7.TabStop = true;
             this.radioButtonDigital7.Text = "Digital 7";
             this.radioButtonDigital7.UseVisualStyleBackColor = true;
+            this.radioButtonDigital7.CheckedChanged += new System.EventHandler(this.radioButtonDigital7_CheckedChanged);
             // 
             // radioButtonDigital6
             // 
@@ -722,6 +723,7 @@
             this.radioButtonDigital6.TabStop = true;
             this.radioButtonDigital6.Text = "Digital 6";
             this.radioButtonDigital6.UseVisualStyleBackColor = true;
+            this.radioButtonDigital6.CheckedChanged += new System.EventHandler(this.radioButtonDigital6_CheckedChanged);
             // 
             // radioButtonDigital5
             // 
@@ -735,6 +737,7 @@
             this.radioButtonDigital5.TabStop = true;
             this.radioButtonDigital5.Text = "Digital 5";
             this.radioButtonDigital5.UseVisualStyleBackColor = true;
+            this.radioButtonDigital5.CheckedChanged += new System.EventHandler(this.radioButtonDigital5_CheckedChanged);
             // 
             // pictureBox3
             // 

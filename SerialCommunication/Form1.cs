@@ -251,5 +251,20 @@ namespace SerialCommunication
                 try { if (serialPortArduino != null && serialPortArduino.IsOpen) serialPortArduino.Close(); } catch { }
             }
         }
+
+        private void radioButtonDigital5_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void radioButtonDigital6_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void radioButtonDigital7_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
