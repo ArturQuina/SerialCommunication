@@ -259,20 +259,8 @@ namespace SerialCommunication
             }
         }
 
-        private void radioButtonDigital5_CheckedChanged(object sender, EventArgs e)
-        {
 
-        }
-
-        private void radioButtonDigital6_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void radioButtonDigital7_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
+        
 
         private void tabControl_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -293,12 +281,37 @@ namespace SerialCommunication
         {
             try
             {
-                RefreshDigitalInputsOnce();
+                if (serialPortArduino.IsOpen)
+                {
+                    serialPortArduino.ReadExisting();
+                    string commando = "get d5";
+                    serialPortArduino.WriteLine(commando);
+                    string antwoord = serialPortArduino.ReadLine();
+                    antwoord = antwoord.TrimEnd();
+                    antwoord = antwoord.Substring(4);
+                    radioButtonDigital5.Checked = (antwoord == "1");
+
+                    commando = "get d6";
+                    serialPortArduino.WriteLine(commando);
+                    antwoord = serialPortArduino.ReadLine();
+                    antwoord = antwoord.TrimEnd();
+                    antwoord = antwoord.Substring(4);
+                    radioButtonDigital6.Checked = (antwoord == "1");
+
+                    commando = "get d7";
+                    serialPortArduino.WriteLine(commando);
+                    antwoord = serialPortArduino.ReadLine();
+                    antwoord = antwoord.TrimEnd();
+                    antwoord = antwoord.Substring(4);
+                    radioButtonDigital7.Checked = (antwoord == "1");
+                }
             }
             catch (Exception exception)
             {
-                try { if (serialPortArduino != null && serialPortArduino.IsOpen) serialPortArduino.Close(); } catch { }
-                MessageBox.Show("Fout in timerOefening3: " + exception.Message);
+                labelStatus.Text = "Error: " + exception.Message;
+                serialPortArduino.Close();
+                radioButtonVerbonden.Checked = false;
+                buttonConnect.Text = "Connect";
             }
         }
     }
