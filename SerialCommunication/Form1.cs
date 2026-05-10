@@ -150,5 +150,22 @@ namespace SerialCommunication
                 }
             }
         }
+
+        private void checkBoxDigital2_CheckedChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (serialPortArduino != null && serialPortArduino.IsOpen)
+                {
+                    string command = checkBoxDigital2.Checked ? "set d2 high" : "set d2 low";
+                    serialPortArduino.WriteLine(command);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Fout bij verzenden: " + ex.Message);
+                try { if (serialPortArduino != null && serialPortArduino.IsOpen) serialPortArduino.Close(); } catch { }
+            }
+        }
     }
 }
