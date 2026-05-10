@@ -19,6 +19,7 @@ namespace SerialCommunication
         public Form1()
         {
             InitializeComponent();
+            trackBarPWM9.Scroll += trackBarPWM9_Scroll;
             serialPortArduino = new SerialPort();
             serialPortArduino.ReadTimeout = 1000;
             serialPortArduino.WriteTimeout = 1000;
