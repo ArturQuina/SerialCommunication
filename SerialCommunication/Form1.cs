@@ -32,6 +32,10 @@ namespace SerialCommunication
             timerOefening4.Tick += timerOefening4_Tick;
             timerOefening4.Enabled = false;
 
+            // timer for Oefening 5 (initialized in designer)
+            timerOefening5.Tick += timerOefening5_Tick;
+            timerOefening5.Enabled = false;
+
             // hook tab control selection changed to enable/disable timer
             tabControl.SelectedIndexChanged += tabControl_SelectedIndexChanged;
         }
@@ -270,6 +274,7 @@ namespace SerialCommunication
         {
             timerOefening3.Enabled = tabControl.SelectedIndex == 3;
             if (timerOefening4 != null) timerOefening4.Enabled = tabControl.SelectedIndex == 4;
+            if (timerOefening5 != null) timerOefening5.Enabled = tabControl.SelectedIndex == 5;
         }
 
         private void timerOefening3_Tick(object sender, EventArgs e)
@@ -329,6 +334,92 @@ namespace SerialCommunication
                     if (antwoord.Length > 4) antwoord = antwoord.Substring(4);
 
                     labelAnalog0.Text = antwoord;
+                }
+            }
+            catch (Exception exception)
+            {
+                labelStatus.Text = "Error: " + exception.Message;
+                try { if (serialPortArduino != null && serialPortArduino.IsOpen) serialPortArduino.Close(); } catch { }
+                radioButtonVerbonden.Checked = false;
+                buttonConnect.Text = "Connect";
+            }
+        }
+
+        private void timerOefening5_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                if (serialPortArduino != null && serialPortArduino.IsOpen)
+                {
+                    // remove any previous unread data from Arduino
+                    serialPortArduino.ReadExisting();
+
+                    // --- Read desired temperature from A0 (0..1023 -> 5..45 °C)
+                    serialPortArduino.WriteLine("get a0");
+                    string antwoordA0 = serialPortArduino.ReadLine().TrimEnd();
+                    if (antwoordA0.Length > 4) antwoordA0 = antwoordA0.Substring(4);
+                    string digitsA0 = new string(antwoordA0.Where(c => char.IsDigit(c)).ToArray());
+                    double desiredTemp = double.NaN;
+                    if (int.TryParse(digitsA0, out int rawA0))
+                    {
+                        double mA0 = 40.0 / 1023.0; // (45-5)/1023
+                        double bA0 = 5.0;
+                        desiredTemp = mA0 * rawA0 + bA0;
+                        labelGewensteTemp.Text = Math.Round(desiredTemp, 1).ToString("0.0") + " °C";
+                    }
+                    else
+                    {
+                        labelStatus.Text = "Onverwacht antwoord A0: " + antwoordA0;
+                    }
+
+                    // --- Read current temperature from A1 (0..1023 -> 0..500 °C)
+                    serialPortArduino.WriteLine("get a1");
+                    string antwoordA1 = serialPortArduino.ReadLine().TrimEnd();
+                    if (antwoordA1.Length > 4) antwoordA1 = antwoordA1.Substring(4);
+                    string digitsA1 = new string(antwoordA1.Where(c => char.IsDigit(c)).ToArray());
+                    double currentTemp = double.NaN;
+                    if (int.TryParse(digitsA1, out int rawA1))
+                    {
+                        double mA1 = 500.0 / 1023.0; // slope for 0..1023 -> 0..500
+                        double bA1 = 0.0;
+                        currentTemp = mA1 * rawA1 + bA1;
+                        labelHuidigeTemp.Text = Math.Round(currentTemp, 1).ToString("0.0") + " °C";
+                    }
+                    else
+                    {
+                        labelStatus.Text = "Onverwacht antwoord A1: " + antwoordA1;
+                    }
+
+                    // --- Control LED on digital pin 2: on when current < desired
+                    if (!double.IsNaN(currentTemp) && !double.IsNaN(desiredTemp))
+                    {
+                        try
+                        {
+                            if (currentTemp < desiredTemp)
+                            {
+                                serialPortArduino.WriteLine("set d2 high");
+                                try { checkBoxDigital2.Checked = true; } catch { }
+                            }
+                            else
+                            {
+                                serialPortArduino.WriteLine("set d2 low");
+                                try { checkBoxDigital2.Checked = false; } catch { }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            labelStatus.Text = "Fout bij LED-aansturing: " + ex.Message;
+                            try { if (serialPortArduino != null && serialPortArduino.IsOpen) serialPortArduino.Close(); } catch { }
+                            radioButtonVerbonden.Checked = false;
+                            buttonConnect.Text = "Connect";
+                        }
+                    }
+                }
+                else
+                {
+                    // no connection
+                    labelStatus.Text = "Niet verbonden";
+                    timerOefening5.Enabled = false;
                 }
             }
             catch (Exception exception)

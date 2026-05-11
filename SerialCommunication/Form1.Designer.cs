@@ -92,6 +92,7 @@
             this.serialPortArd = new System.IO.Ports.SerialPort(this.components);
             this.timerOefening3 = new System.Windows.Forms.Timer(this.components);
             this.timerOefening4 = new System.Windows.Forms.Timer(this.components);
+            this.timerOefening5 = new System.Windows.Forms.Timer(this.components);
             this.tabControl.SuspendLayout();
             this.tabPageInstellingen.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -881,6 +882,10 @@
             // 
             this.timerOefening4.Interval = 1000;
             // 
+            // timerOefening5
+            // 
+            this.timerOefening5.Interval = 1000;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -995,6 +1000,7 @@
         private System.IO.Ports.SerialPort serialPortArd;
         private System.Windows.Forms.Timer timerOefening3;
         private System.Windows.Forms.Timer timerOefening4;
+        private System.Windows.Forms.Timer timerOefening5;
     }
 }
 
