@@ -264,17 +264,7 @@ namespace SerialCommunication
 
         private void tabControl_SelectedIndexChanged(object sender, EventArgs e)
         {
-            try
-            {
-                if (tabControl.SelectedTab == tabPageOefening3)
-                    timerOefening3.Enabled = true;
-                else
-                    timerOefening3.Enabled = false;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Fout bij tab selectie: " + ex.Message);
-            }
+            timerOefening3.Enabled = tabControl.SelectedIndex == 3; 
         }
 
         private void timerOefening3_Tick(object sender, EventArgs e)
@@ -291,14 +281,14 @@ namespace SerialCommunication
                     antwoord = antwoord.Substring(4);
                     radioButtonDigital5.Checked = (antwoord == "1");
 
-                    commando = "get d6";
+                    commando = "get d7";
                     serialPortArduino.WriteLine(commando);
                     antwoord = serialPortArduino.ReadLine();
                     antwoord = antwoord.TrimEnd();
                     antwoord = antwoord.Substring(4);
                     radioButtonDigital6.Checked = (antwoord == "1");
 
-                    commando = "get d7";
+                    commando = "get d6";
                     serialPortArduino.WriteLine(commando);
                     antwoord = serialPortArduino.ReadLine();
                     antwoord = antwoord.TrimEnd();
