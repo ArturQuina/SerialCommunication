@@ -91,6 +91,7 @@
             this.labelStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.serialPortArd = new System.IO.Ports.SerialPort(this.components);
             this.timerOefening3 = new System.Windows.Forms.Timer(this.components);
+            this.timerOefening4 = new System.Windows.Forms.Timer(this.components);
             this.tabControl.SuspendLayout();
             this.tabPageInstellingen.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -711,7 +712,6 @@
             this.radioButtonDigital7.TabStop = true;
             this.radioButtonDigital7.Text = "Digital 7";
             this.radioButtonDigital7.UseVisualStyleBackColor = true;
-
             // 
             // radioButtonDigital6
             // 
@@ -725,7 +725,6 @@
             this.radioButtonDigital6.TabStop = true;
             this.radioButtonDigital6.Text = "Digital 6";
             this.radioButtonDigital6.UseVisualStyleBackColor = true;
-
             // 
             // radioButtonDigital5
             // 
@@ -739,7 +738,6 @@
             this.radioButtonDigital5.TabStop = true;
             this.radioButtonDigital5.Text = "Digital 5";
             this.radioButtonDigital5.UseVisualStyleBackColor = true;
-
             // 
             // pictureBox3
             // 
@@ -879,6 +877,10 @@
             // 
             this.timerOefening3.Interval = 1000;
             // 
+            // timerOefening4
+            // 
+            this.timerOefening4.Interval = 1000;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -992,6 +994,7 @@
         private System.Windows.Forms.ToolStripStatusLabel labelStatus;
         private System.IO.Ports.SerialPort serialPortArd;
         private System.Windows.Forms.Timer timerOefening3;
+        private System.Windows.Forms.Timer timerOefening4;
     }
 }
 
