@@ -15,6 +15,7 @@ namespace SerialCommunication
     public partial class Form1 : Form
     {
         private SerialPort serialPortArduino;
+        private int toestand = 0;
 
         public Form1()
         {
@@ -36,8 +37,21 @@ namespace SerialCommunication
             timerOefening5.Tick += timerOefening5_Tick;
             timerOefening5.Enabled = false;
 
+            // timer for TemperatuurAlarm (initialized in designer)
+            timerTemperatuurAlarm.Tick += timerTemperatuurAlarm_Tick;
+            timerTemperatuurAlarm.Enabled = false;
+
             // hook tab control selection changed to enable/disable timer
             tabControl.SelectedIndexChanged += tabControl_SelectedIndexChanged;
+        }
+
+        private void ResetConnectionUI()
+        {
+            try { labelStatus.Text = "Niet verbonden"; } catch { }
+            try { radioButtonVerbonden.Checked = false; } catch { }
+            try { buttonConnect.Text = "Connect"; } catch { }
+            try { radioButtonVerbonden.Location = new System.Drawing.Point(968, 17); } catch { }
+            try { radioButtonVerbonden.Text = "verbonden"; } catch { }
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -139,9 +153,9 @@ namespace SerialCommunication
                     catch (TimeoutException)
                     {
                         // geen antwoord binnen timeout
-                        serialPortArduino.Close();
+                        try { serialPortArduino.Close(); } catch { }
                         MessageBox.Show("Geen antwoord van Arduino (timeout).");
-                        labelStatus.Text = "Niet verbonden";
+                        ResetConnectionUI();
                         return;
                     }
 
@@ -153,16 +167,16 @@ namespace SerialCommunication
                     }
                     else
                     {
-                        serialPortArduino.Close();
+                        try { serialPortArduino.Close(); } catch { }
                         MessageBox.Show("Onverwacht antwoord van Arduino: " + reply);
-                        labelStatus.Text = "Niet verbonden";
+                        ResetConnectionUI();
                     }
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show("Fout bij verbinden: " + ex.Message);
                     try { if (serialPortArduino.IsOpen) serialPortArduino.Close(); } catch { }
-                    labelStatus.Text = "Niet verbonden";
+                    ResetConnectionUI();
                 }
             }
         }
@@ -181,6 +195,7 @@ namespace SerialCommunication
             {
                 MessageBox.Show("Fout bij verzenden: " + ex.Message);
                 try { if (serialPortArduino != null && serialPortArduino.IsOpen) serialPortArduino.Close(); } catch { }
+                ResetConnectionUI();
             }
         }
 
@@ -198,6 +213,7 @@ namespace SerialCommunication
             {
                 MessageBox.Show("Fout bij verzenden: " + ex.Message);
                 try { if (serialPortArduino != null && serialPortArduino.IsOpen) serialPortArduino.Close(); } catch { }
+                ResetConnectionUI();
             }
         }
 
@@ -215,6 +231,7 @@ namespace SerialCommunication
             {
                 MessageBox.Show("Fout bij verzenden: " + ex.Message);
                 try { if (serialPortArduino != null && serialPortArduino.IsOpen) serialPortArduino.Close(); } catch { }
+                ResetConnectionUI();
             }
         }
         private void trackBarPWM9_Scroll(object sender, EventArgs e)
@@ -231,6 +248,7 @@ namespace SerialCommunication
             {
                 MessageBox.Show("Fout bij verzenden: " + ex.Message);
                 try { if (serialPortArduino != null && serialPortArduino.IsOpen) serialPortArduino.Close(); } catch { }
+                ResetConnectionUI();
             }
         }
         private void trackBarPWM10_Scroll(object sender, EventArgs e)
@@ -247,6 +265,7 @@ namespace SerialCommunication
             {
                 MessageBox.Show("Fout bij verzenden: " + ex.Message);
                 try { if (serialPortArduino != null && serialPortArduino.IsOpen) serialPortArduino.Close(); } catch { }
+                ResetConnectionUI();
             }
         }
 
@@ -264,6 +283,7 @@ namespace SerialCommunication
             {
                 MessageBox.Show("Fout bij verzenden: " + ex.Message);
                 try { if (serialPortArduino != null && serialPortArduino.IsOpen) serialPortArduino.Close(); } catch { }
+                ResetConnectionUI();
             }
         }
 
@@ -275,6 +295,8 @@ namespace SerialCommunication
             timerOefening3.Enabled = tabControl.SelectedIndex == 3;
             if (timerOefening4 != null) timerOefening4.Enabled = tabControl.SelectedIndex == 4;
             if (timerOefening5 != null) timerOefening5.Enabled = tabControl.SelectedIndex == 5;
+            if (timerTemperatuurAlarm != null)
+                timerTemperatuurAlarm.Enabled = tabControl.SelectedTab == tabPageTemperatuurAlarm;
         }
 
         private void timerOefening3_Tick(object sender, EventArgs e)
@@ -312,6 +334,10 @@ namespace SerialCommunication
                 serialPortArduino.Close();
                 radioButtonVerbonden.Checked = false;
                 buttonConnect.Text = "Connect";
+                // Zorg dat de status en indicator terug naar beginwaarden gaan
+                labelStatus.Text = "Niet verbonden";
+                try { radioButtonVerbonden.Location = new System.Drawing.Point(968, 17); } catch { }
+                radioButtonVerbonden.Text = "verbonden";
             }
         }
 
@@ -342,6 +368,10 @@ namespace SerialCommunication
                 try { if (serialPortArduino != null && serialPortArduino.IsOpen) serialPortArduino.Close(); } catch { }
                 radioButtonVerbonden.Checked = false;
                 buttonConnect.Text = "Connect";
+                // Reset status and radio indicator to initial state
+                labelStatus.Text = "Niet verbonden";
+                try { radioButtonVerbonden.Location = new System.Drawing.Point(968, 17); } catch { }
+                radioButtonVerbonden.Text = "verbonden";
             }
         }
 
@@ -411,7 +441,11 @@ namespace SerialCommunication
                             labelStatus.Text = "Fout bij LED-aansturing: " + ex.Message;
                             try { if (serialPortArduino != null && serialPortArduino.IsOpen) serialPortArduino.Close(); } catch { }
                             radioButtonVerbonden.Checked = false;
-                            buttonConnect.Text = "Connect";
+                            buttonConnect.Text = "Checked";
+                            // Reset status and radio indicator to initial state
+                            labelStatus.Text = "Niet verbonden";
+                            try { radioButtonVerbonden.Location = new System.Drawing.Point(968, 17); } catch { }
+                            radioButtonVerbonden.Text = "verbonden";
                         }
                     }
                 }
@@ -419,6 +453,8 @@ namespace SerialCommunication
                 {
                     // no connection
                     labelStatus.Text = "Niet verbonden";
+                    radioButtonVerbonden.Checked = false; //x
+                    buttonConnect.Text = "conected"; //x
                     timerOefening5.Enabled = false;
                 }
             }
@@ -426,9 +462,15 @@ namespace SerialCommunication
             {
                 labelStatus.Text = "Error: " + exception.Message;
                 try { if (serialPortArduino != null && serialPortArduino.IsOpen) serialPortArduino.Close(); } catch { }
-                radioButtonVerbonden.Checked = false;
-                buttonConnect.Text = "Connect";
+                radioButtonVerbonden.Checked = false; //x
+                buttonConnect.Text = "conected"; //x
+                // Reset status and radio indicator to initial state
+                labelStatus.Text = "Niet verbonden";
+                try { radioButtonVerbonden.Location = new System.Drawing.Point(968, 17); } catch { }
+                radioButtonVerbonden.Text = "verbonden";
             }
         }
+
+        
     }
 }

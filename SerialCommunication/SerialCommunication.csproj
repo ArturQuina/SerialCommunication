@@ -97,5 +97,8 @@
   <ItemGroup>
     <None Include="Resources\thermostat.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Schermafbeelding 2026-08-19 201653.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
